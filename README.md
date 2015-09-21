@@ -7,15 +7,14 @@ and we embeded a iframe(with pano id) on web page to display those photos.
 
 #Have a look when we can upload to google 
 https://office.snailhouse.com.tw/object/18083
-
-
+![With Google Views](https://cloud.githubusercontent.com/assets/846224/9996990/6cf8da3e-60bc-11e5-9c73-f708992b49e2.png)
 
 
 But everything changed. Google shuted down the "Classic Views" and intriduced "lite" version,
+now we'll not able to upload photos any more! What a "Good" News.  
 
-now we'll not able to upload photos any more! What a "good" New.  
-
-Fortunately, we founded a solution to display sphere photos on our web without upload to google now.
+Fortunately, we founded a solution.
+It's easy to display and edit sphere photos pov for our site, and upload photos to oue own cdn server now.
 
 #Now check what we've done 
 https://office.snailhouse.com.tw/object/18130
