@@ -1,0 +1,185 @@
+<html xmlns="http://www.w3.org/1999/xhtml" prefix="og: http://ogp.me/ns# fb:http://www.facebook.com/2008/fbml">
+<head>
+<title>SnailHouse - Browse your SpherePhotos </title>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+
+<!-- lightslider -->
+<link  href="./css/lightslider.css" rel="stylesheet"> 
+<script src="./js/lightslider.js"></script>
+<script>
+  function updateData(){
+    //alert(Math.round($("#heading").val())); 
+    var json = {
+           'imageName':$("#imageName").val(),
+           'heading':Math.round($("#heading").val()),
+           'pitch':Math.round($("#pitch").val()),
+           'zoom':Math.round($("#zoom").val()),
+           };
+    alert('Your data updated.You can add ajax method to update data on server side.');       
+        /*   
+        $.ajax({ 
+              url:'//YOUR URL',
+              type:"POST", 
+              dataType: 'json', 
+              contentType: "application/json; charset=utf-8",
+              data: JSON.stringify(json),
+              success: function(res) {
+                if(res.returnCode=='200'){
+                alert('儲存資料完成!');               
+              }
+                else{
+                  alert(res.returnReason);
+                }               
+                 
+              },
+              error: function(xhr, status, error) {
+                  alert(xhr.responseText);
+                  alert('status:'+status);
+                  alert('error:'+error);
+              },
+        });
+        */
+  }
+</script>
+</head>
+  <body style="width:1000px;height:900px">
+    <div style="margin:20px;">
+    <H1>Display Sphere Photos at Your WebSite & Change POV </H1>  
+    Image:<input id="imgPath" type="text" size="40"><br><br>
+    Heading:<input id="heading" type="text" size="20">
+    Pitch:<input id="pitch" type="text"  size="20">
+    Zoom:<input id="zoom" type="text"  size="20"> 
+    <button type="button" class="button" onClick="updateData();">Save POV Data</button>
+    <br><br>
+    <div style="width:940px;height:600px;">
+    <div id="map-canvas" style="width:800px;height:500px; padding:30px;"></div>
+    <h4>Your Journey:<span style="padding-left:10px; color:#555; font-weight:100;" id="spDesc"></span></h4></div>
+    <div class="demo">
+    <div class="item">                      
+        <ul id="content-slider" class="content-slider">
+            <li>                 
+                <h3 class="bw" onClick="changeSP('R0010051.JPG',60,0,0,'Dining Room');">Dining Room</h3> 
+            </li>
+            <li>                 
+                <h3 class="bw" onClick="changeSP('R0010052.JPG',-70,0,0,'Department Office');">Department Office</h3> 
+            </li>
+            <li>                 
+                <h3 class="bw" onClick="changeSP('R0010053.JPG',10,-10,0.5,'Taiwan Lottery Store');">Lottery Store</h3> 
+            </li>
+            <li>                 
+                <h3 class="bw" onClick="changeSP('R0010054.JPG',100,0,1,'test4');">'test4'</h3> 
+            </li>
+            <li>                 
+                <h3 class="bw" onClick="changeSP('R0010055.JPG',0,20,0,'test5');">Taipei MRT Station</h3> 
+            </li>
+            <li>                 
+                <h3 class="bw" onClick="changeSP('R0010058.JPG',0,0,1,'Coffee Shop');">Coffee Shop</h3> 
+            </li>
+         </ul>
+     </div>  
+     </div> 	
+     </div>      
+     </div>   
+  </body>
+<script>
+var panorama;
+function panoInit() {
+  //You have to setup real data for the first image,not $('#'+idName).val() way
+  $("#imgPath").val('R0010051.JPG');
+  $("#heading").val(60);
+  $("#pitch").val(0);
+  $("#zoom").val(0);  
+  $("#spDesc").text('Dining Room');		
+  panorama = new google.maps.StreetViewPanorama(  
+      document.getElementById('map-canvas'),
+      {
+        pano: '720',
+        visible: true,        
+        pov: {heading: 60, pitch: 0},
+        zoom: 0,             
+        panoProvider: getCustomPanorama
+      });
+      
+      //Added Listener for get pov data for parnrama
+      panorama.addListener('pov_changed', function() {
+      //alert('heading:'+ panorama.getPov().heading+',pitch:'+ panorama.getPov().pitch +',zoom:'+ panorama.getPov().zoom );
+        $('#heading').val(panorama.getPov().heading);
+        $('#pitch').val(panorama.getPov().pitch);
+        $('#zoom').val(panorama.getPov().zoom);
+      });    
+}
+// Return a pano image given the panoID.
+function getCustomPanoramaTileUrl(pano, zoom, tileX, tileY) {
+  return 'img/'+$("#imgPath").val();
+}
+
+function getCustomPanorama(zoom, tileX, tileY) {
+    return {
+      copyright: '2015 Zstrength Inc(c) ',
+      tiles: {
+        tileSize: new google.maps.Size(1024, 512),
+        worldSize: new google.maps.Size(1024, 512),
+        getTileUrl: getCustomPanoramaTileUrl
+      }
+    };
+}
+google.maps.event.addDomListener(window, 'load', panoInit);
+
+
+function changeSP(imgPath,spHeading,spPitch,spZoom,spDescription){
+    $("#imgPath").val(imgPath);
+    $("#heading").val(spHeading);
+    $("#pitch").val(spPitch);
+    $("#zoom").val(spZoom);
+    $("#spDesc").text(spDescription);
+    panorama = new google.maps.StreetViewPanorama(
+      document.getElementById('map-canvas'),
+      {
+        pano: '720',     
+        pov: {heading: spHeading, pitch: spPitch},
+        zoom:spZoom,  
+        panoProvider: getCustomPanorama
+      });
+    panorama.addListener('pov_changed', function() {
+        //alert('heading:'+ panorama.getPov().heading+',pitch:'+ panorama.getPov().pitch +',zoom:'+ panorama.getPov().zoom );
+        $('#heading').val(panorama.getPov().heading);
+        $('#pitch').val(panorama.getPov().pitch);
+        $('#zoom').val(panorama.getPov().zoom);
+    });      
+}
+
+
+$(document).ready(function(){	
+  $('input').addClass("ui-corner-all");
+	$("#content-slider").lightSlider({
+		item:4,
+    loop:true,
+    slideMove:4,
+    keyPress:false,
+    easing: 'cubic-bezier(0.25, 0, 0.25, 1)',
+    speed:600,
+    responsive : [
+          {
+              breakpoint:992,
+              settings: {
+                  item:3,
+                  slideMove:1,
+                  slideMargin:6,
+                }
+          },
+          {
+              breakpoint:480,
+              settings: {
+                  item:2,
+                  slideMove:1
+                }
+          }
+      ]        
+    });						 
+});
+</script>  
+</html>
